@@ -1,0 +1,16 @@
+{
+    "name": "jackharris/lucent-blade",
+    "description": "A Laravel blade style templating engine for the Lucent framework.",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^12.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jack Harris",
+            "email": "st_tuff@icloud.com"
+        }
+    ],
+    "require": {}
+}
