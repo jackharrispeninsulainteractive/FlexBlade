@@ -13,7 +13,7 @@ A Blade-inspired templating engine designed specifically for the Lucent Framewor
 - **🔧 Component System**: Reusable components with `<x-component>` syntax
 - **📄 Layout Inheritance**: Template extension with `@extends` and `@yield`
 - **⚡ Auto-Minification**: Built-in HTML, CSS, and JavaScript minification
-- **🔄 ViewBag Integration**: Access shared data with `$view->property` syntax
+- **🔄 ViewBag Integration**: Access shared data with `$view->property` syntax inspired by ASP.NET
 - **🚀 Easy Integration**: Drop-in package for Lucent Framework
 - **📦 Self-Contained**: Distributed as a single PHAR file
 
@@ -181,6 +181,33 @@ your-project/
 
 <h1>{{ $title }}</h1>
 <p>Page content goes here</p>
+```
+
+## 🔄 ViewBag Integration
+
+LucentBlade includes ASP.NET-style ViewBag functionality for sharing data across your application. The ViewBag provides a dynamic way to pass data between controllers, middleware, and templates without explicitly passing variables.
+
+### Setting ViewBag Data
+
+```php
+use LucentBlade\View\View;
+
+// In your controller or middleware
+View::Bag()->put('title', 'My Application');
+View::Bag()->put('user', $currentUser);
+
+// Set multiple values at once
+View::Bag()->putArray([
+    'theme' => 'dark',
+    'notifications' => $notifications
+]);
+
+// Use prefix to namespace your data
+View::Bag()->putArray([
+    'name' => 'John Doe',
+    'email' => 'john@example.com'
+], 'user_');
+// Creates: $view->user_name and $view->user_email
 ```
 
 ## 🔧 Requirements
