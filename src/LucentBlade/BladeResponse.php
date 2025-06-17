@@ -73,6 +73,6 @@ class BladeResponse extends HttpResponse
      */
     public function set_response_header(): void
     {
-        header("Content-Type: text/html; charset=utf-8");
+        //header("Content-Type: text/html; charset=utf-8");
     }
 }
