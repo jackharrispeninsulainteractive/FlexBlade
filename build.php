@@ -152,7 +152,7 @@ if (PHP_SAPI === 'cli' && basename($_SERVER['SCRIPT_FILENAME']) === basename(__F
     }
     
     echo PHP_EOL;
-    echo "Usage: Include this PHAR in your Lucent project or require via Composer" . PHP_EOL;
+    echo "Usage: Include this PHAR in your Lucent project." . PHP_EOL;
 }
 
 __HALT_COMPILER();
@@ -212,7 +212,4 @@ echo COLORS['YELLOW'] . "To use this package:" . COLORS['RESET'] . PHP_EOL;
 echo "1. Copy lucent-blade.phar to your project's packages/ directory" . PHP_EOL;
 echo "2. Include it in your project: require_once 'packages/lucent-blade.phar';" . PHP_EOL;
 echo "3. Use in controllers: return new LucentBlade\\BladeResponse('view', \$data);" . PHP_EOL;
-echo PHP_EOL;
-echo COLORS['BLUE'] . "Or via Composer (if published):" . COLORS['RESET'] . PHP_EOL;
-echo "composer require lucent/blade" . PHP_EOL;
 echo PHP_EOL;
