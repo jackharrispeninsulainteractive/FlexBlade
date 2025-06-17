@@ -1,5 +1,4 @@
 name: Build and Release LucentBlade PHAR
-
 on:
   push:
     branches:
@@ -19,46 +18,31 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: phar
+          extensions: phar, dom, mbstring, fileinfo
           tools: composer:v2
           coverage: xdebug
           ini-values: phar.readonly=0
 
       - name: Install dependencies
         run: |
-          if [ -f composer.json ]; then
-            composer install --prefer-dist --no-progress
-          fi
+          composer install --prefer-dist --no-progress
 
-      - name: Create test structure
+      - name: Create temp directories
         run: |
-          mkdir -p tests/fixtures/views
-          mkdir -p storage/views
-          chmod -R 755 storage
+          mkdir -p temp_install
+          chmod -R 755 temp_install
 
       - name: Run tests
         run: |
-          if [ -f vendor/bin/phpunit ]; then
-            vendor/bin/phpunit
-          else
-            echo "No tests found - creating basic validation test"
-            php -r "
-              require_once 'src/BladeResponse.php';
-              echo 'LucentBlade classes loaded successfully' . PHP_EOL;
-            "
-          fi
-
-      - name: Run static analysis
-        run: |
-          if [ -f vendor/bin/phpstan ]; then
-            vendor/bin/phpstan analyse src --level=5 --no-progress || true
-          fi
+          php vendor/bin/phpunit --bootstrap dev_build.php --configuration phpunit.xml
+        env:
+          TEMP_INSTALL: ${{ github.workspace }}/temp_install
 
   build-and-release:
     needs: test
@@ -66,13 +50,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: phar
+          extensions: phar, dom, mbstring, fileinfo
           tools: composer:v2
           ini-values: phar.readonly=0
 
@@ -104,42 +88,6 @@ jobs:
           
           # Test PHAR execution
           php $PHAR_FILE || echo "PHAR executed successfully"
-          
-          # Store PHAR filename for upload
-          echo "phar_file=$PHAR_FILE" >> $GITHUB_ENV
-
-      - name: Upload PHAR as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: lucent-blade-${{ steps.version.outputs.version }}
-          path: ${{ env.phar_file }}
-          retention-days: 30
-
-  create-release:
-    needs: build-and-release
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' # Only create release for push events
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Generate Release Version
-        id: version
-        run: |
-          VERSION="v0.$(date +'%y%m%d').${GITHUB_RUN_NUMBER}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: ./artifacts
-
-      - name: Prepare release files
-        run: |
-          mkdir -p release-files
-          find ./artifacts -name "*.phar" -exec cp {} release-files/ \;
-          ls -la release-files/
 
       - name: Generate Release Notes
         id: release_notes
@@ -149,7 +97,7 @@ jobs:
           
           🎉 **New Release of LucentBlade Package**
           
-          ### 📦 Package:
+          ### 📦 What's Included:
           
           - **`lucent-blade.phar`** - Complete LucentBlade package with Blade templating for Lucent Framework
           
@@ -157,7 +105,6 @@ jobs:
           
           **Download PHAR:**
           ```bash
-          # Download the package
           curl -L -o lucent-blade.phar https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/lucent-blade.phar
           ```
           
@@ -186,9 +133,11 @@ jobs:
           - PHP >= 8.1
           - Lucent Framework (any version)
           
-          ### 📝 Changes:
+          ### 📝 Build Information:
+          - Version: ${{ steps.version.outputs.version }}
           - Built from commit: `${{ github.sha }}`
           - Build date: `$(date -u +"%Y-%m-%d %H:%M:%S UTC")`
+          - PHP Version: 8.4
           EOF
           
           echo "release_notes<<EOF" >> $GITHUB_OUTPUT
@@ -198,7 +147,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: release-files/*
+          files: lucent-blade.phar
           tag_name: ${{ steps.version.outputs.version }}
           name: LucentBlade ${{ steps.version.outputs.version }}
           body: ${{ steps.release_notes.outputs.release_notes }}
@@ -206,22 +155,9 @@ jobs:
           prerelease: false
           generate_release_notes: false
 
-      - name: Update composer.json version
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          if [ -f composer.json ]; then
-            # Update version in composer.json if it exists
-            jq --arg version "$VERSION" '.version = $version' composer.json > composer.json.tmp
-            mv composer.json.tmp composer.json
-            echo "Updated composer.json with version $VERSION"
-          fi
-
-  cleanup:
-    needs: [build-and-release, create-release]
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: Clean up old artifacts
-        run: |
-          echo "Cleaning up completed - artifacts will be auto-deleted after retention period"
+      - name: Upload PHAR as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lucent-blade-${{ steps.version.outputs.version }}
+          path: lucent-blade.phar
+          retention-days: 90
