@@ -2,6 +2,8 @@
 
 namespace LucentBlade\Minifier;
 
+use LucentBlade\Blade\BladeCompiler;
+
 class Minify
 {
 
