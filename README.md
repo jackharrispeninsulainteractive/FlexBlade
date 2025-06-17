@@ -1,7 +1,7 @@
 # LucentBlade
 
-[![PHP Tests](https://github.com/jackharris/lucent-blade/actions/workflows/tests.yml/badge.svg)](https://github.com/jackharris/lucent-blade/actions/workflows/tests.yml)
-[![Build and Release](https://github.com/jackharris/lucent-blade/actions/workflows/main.yml/badge.svg)](https://github.com/jackharris/lucent-blade/actions/workflows/main.yml)
+[![PHP Tests](https://github.com/jackharrispeninsulainteractive/Lucent-Blade/actions/workflows/tests.yaml/badge.svg)]([https://github.com/jackharris/lucent-blade/actions/workflows/tests.yaml](https://github.com/jackharrispeninsulainteractive/Lucent-Blade/actions/workflows/tests.yaml))
+[![Build and Release](https://github.com/jackharrispeninsulainteractive/Lucent-Blade/actions/workflows/main.yaml/badge.svg)]([https://github.com/jackharris/lucent-blade/actions/workflows/main.yaml](https://github.com/jackharrispeninsulainteractive/Lucent-Blade/actions/workflows/main.yaml))
 [![PHP Version](https://img.shields.io/badge/php-8.4%2B-blue)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
