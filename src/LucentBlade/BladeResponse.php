@@ -66,13 +66,10 @@ class BladeResponse extends HttpResponse
         return $this->compiler->render($this->path,$this->data);
     }
 
-    /**
-     * Set the HTTP response headers for a Blade template
-     *
-     * @return void
-     */
     public function set_response_header(): void
     {
-        //header("Content-Type: text/html; charset=utf-8");
+        if (!headers_sent()) {
+            header("Content-Type: text/html; charset=utf-8");
+        }
     }
 }
