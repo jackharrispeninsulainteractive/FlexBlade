@@ -87,14 +87,20 @@ class Minify
             return "";
         }, $content);
 
-
-        foreach ($this->styles as $name => $style){
-            $content = preg_replace('/(<\/head>)/is', "<style id='{$name}'>".implode($style)."</style>", $content, 1);
+        $styleTags = '';
+        foreach (array_filter($this->styles) as $name => $style) {
+            $styleTags .= "<style id='{$name}'>" . implode('', $style) . "</style>";
+        }
+        if ($styleTags) {
+            $content = preg_replace('/(<\/head>)/is', $styleTags . '$1', $content, 1);
         }
 
-        foreach ($this->scripts as $name => $script){
-            $scriptTag = "<script id='{$name}'>".implode($script)."</script>";
-            $content = preg_replace('/(<\/body>)/is', $scriptTag."\n$1", $content, 1);
+        $scriptTags = '';
+        foreach (array_filter($this->scripts) as $name => $script) {
+            $scriptTags .= "<script id='{$name}'>" . implode('', $script) . "</script>";
+        }
+        if ($scriptTags) {
+            $content = preg_replace('/(<\/body>)/is', $scriptTags . '$1', $content, 1);
         }
 
         return self::minifyHtml($content);
