@@ -2,10 +2,10 @@
 
 cleanupDirectory(__DIR__ . '/temp_install');
 
-$temp_install = __DIR__ . '/temp_install';
+const TEMP_INSTALL = __DIR__ . '/temp_install';
 
-if(!is_dir($temp_install)) {
-    mkdir($temp_install);
+if(!is_dir(TEMP_INSTALL)) {
+    mkdir(TEMP_INSTALL);
 }
 
 require_once __DIR__ . '/build.php';
