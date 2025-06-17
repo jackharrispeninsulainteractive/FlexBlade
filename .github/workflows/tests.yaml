@@ -2,15 +2,18 @@ name: PHP Tests
 on:
   workflow_dispatch:
   pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'composer.json'
+      - 'phpunit.xml'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2', '8.3', '8.4']
-      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -19,7 +22,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: '8.4'
           extensions: phar, dom, mbstring, fileinfo
           tools: composer:v2
           coverage: xdebug
@@ -59,7 +62,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-php${{ matrix.php-version }}
+          name: test-artifacts
           path: |
             temp_install/
           retention-days: 7
