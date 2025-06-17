@@ -25,10 +25,10 @@ class Minify
     public function __construct()
     {
         $this->styles = [
-            "root" => []
+            "style-root" => []
         ];
         $this->scripts = [
-            "root" =>[]
+            "script-root" =>[]
         ];
 
         $this->once = [];
@@ -45,7 +45,7 @@ class Minify
         $content = preg_replace_callback(self::$regex[0], function ($matches) {
             $props = BladeCompiler::propertiesToKeyValuePair($matches[2]);
             $type = $matches[1];
-            $scope = $props[MinifyOption::SCOPE->value] ?? "root";
+            $scope = $props[MinifyOption::SCOPE->value] ?? $matches[1]."-root";
 
             if(isset($props[MinifyOption::NO_MINIFY->value])) {
                 return $matches[0];
