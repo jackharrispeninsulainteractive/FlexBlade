@@ -1,8 +1,7 @@
 # LucentBlade
 
 [![PHP Tests](https://github.com/jackharris/lucent-blade/actions/workflows/tests.yml/badge.svg)](https://github.com/jackharris/lucent-blade/actions/workflows/tests.yml)
-[![Build and Release](https://github.com/jackharris/lucent-blade/actions/workflows/build-release.yml/badge.svg)](https://github.com/jackharris/lucent-blade/actions/workflows/build-release.yml)
-[![Latest Release](https://img.shields.io/github/v/release/jackharris/lucent-blade)](https://github.com/jackharris/lucent-blade/releases/latest)
+[![Build and Release](https://github.com/jackharris/lucent-blade/actions/workflows/main.yml/badge.svg)](https://github.com/jackharris/lucent-blade/actions/workflows/main.yml)
 [![PHP Version](https://img.shields.io/badge/php-8.4%2B-blue)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -186,7 +185,7 @@ your-project/
 
 ## 🔧 Requirements
 
-- **PHP**: 8.1 or higher
+- **PHP**: 8.4 or higher
 - **Lucent Framework**: Any version
 - **Extensions**: `phar`, `dom`, `mbstring`, `fileinfo`
 
