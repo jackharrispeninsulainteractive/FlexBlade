@@ -4,6 +4,7 @@ namespace LucentBlade\Blade;
 
 use Exception;
 use LucentBlade\Minifier\Minify;
+use LucentBlade\View\View;
 
 /**
  * BladeCompiler
