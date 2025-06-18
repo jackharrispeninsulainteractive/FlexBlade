@@ -2,7 +2,7 @@
 
 namespace Unit;
 
-use LucentBlade\Minifier\Minify;
+use FlexBlade\Minifier\Minify;
 use PHPUnit\Framework\TestCase;
 
 class CSSMinifierTest extends TestCase
