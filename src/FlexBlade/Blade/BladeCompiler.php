@@ -87,6 +87,10 @@ class BladeCompiler
             $view.=".blade.php";
         }
 
+        if(!file_exists(VIEWS.$view)){
+            throw new Exception("Unable to load layout file from ".VIEWS.$view);
+        }
+
         // Get the content of the view file
         $page = file_get_contents(VIEWS.$view);
 
@@ -112,11 +116,6 @@ class BladeCompiler
         ob_start();
         extract($data);
         eval("?>".$page);
-
-        //$view = str_replace(".blade","",$view);
-
-        //$file = new File("/Storage/BladeCache/".$view);
-        //$file->create($minifier->minifyMixed($page));
 
         return $minifier->minifyHtmlDocument(ob_get_clean());
     }
@@ -145,6 +144,7 @@ class BladeCompiler
      *
      * @param string $input Blade template content
      * @return array|null Layout information including name, path, and content
+     * @throws Exception
      */
     function getBladeLayout($input) : ?array
     {
@@ -159,7 +159,11 @@ class BladeCompiler
         $component["name"] = $name;
 
         // Determine the layout file path
-        $component["path"] = VIEWS."Blade".DIRECTORY_SEPARATOR.str_replace('.',DIRECTORY_SEPARATOR,$name).".blade.php";
+        $component["path"] = VIEWS.str_replace('.',DIRECTORY_SEPARATOR,$name).".blade.php";
+
+        if(!file_exists($component["path"])){
+            throw new Exception("Unable to load layout file from ".$component["path"]);
+        }
 
         // Get the layout content
         $component["content"] = file_get_contents($component["path"]);
@@ -281,8 +285,7 @@ class BladeCompiler
                 return $phpCode;
             }
 
-
-            return $props[substr($matches[1], 1)];
+            return "<?php echo $" . $key . "; ?>";
         }, $content);
     }
 
