@@ -1,4 +1,4 @@
-name: Build and Release LucentBlade PHAR
+name: Build and Release Flex Blade PHAR
 on:
   push:
     branches:
@@ -71,12 +71,12 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          echo "Building LucentBlade package with version $VERSION"
+          echo "Building Flex Blade package with version $VERSION"
           php build.php
 
       - name: Verify PHAR
         run: |
-          PHAR_FILE="lucent-blade.phar"
+          PHAR_FILE="flexblade.phar"
           
           if [ ! -f "$PHAR_FILE" ]; then
             echo "Error: $PHAR_FILE was not created"
@@ -93,45 +93,42 @@ jobs:
         id: release_notes
         run: |
           cat > release_notes.md << 'EOF'
-          ## LucentBlade ${{ steps.version.outputs.version }}
+          ## Flex Blade ${{ steps.version.outputs.version }}
           
-          🎉 **New Release of LucentBlade Package**
+          🎉 **New Release of Flex Blade Package**
           
           ### 📦 What's Included:
           
-          - **`lucent-blade.phar`** - Complete LucentBlade package with Blade templating for Lucent Framework
+          - **`flexblade.phar`** - Complete Flex Blade package with Blade inspired templating for PHP
           
           ### 🚀 Installation:
           
           **Download PHAR:**
           ```bash
-          curl -L -o lucent-blade.phar https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/lucent-blade.phar
+          curl -L -o flexblade.phar https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/flexblade.phar
           ```
           
-          **Include in your Lucent project:**
+          **Include in your PHP project:**
           ```php
           // In your bootstrap or index.php
-          require_once 'path/to/lucent-blade.phar';
+          require_once 'path/to/flexblade.phar';
           ```
           
           ### 💡 Usage:
           
           ```php
-          use LucentBlade\BladeResponse;
-          
-          // In your Lucent controller
-          public function index(): BladeResponse 
-          {
-              return new BladeResponse('welcome', [
-                  'title' => 'Welcome to Lucent',
-                  'user' => $user
-              ]);
-          }
+          // In your PHP file
+          define('VIEWS', __DIR__ . '/views/');
+          require_once 'flexblade.phar';
+            
+          use FlexBlade\Blade\BladeCompiler;
+            
+          $blade = new BladeCompiler();
+          echo $blade->render('welcome', ['name' => 'World']);
           ```
           
           ### 🔧 Requirements:
-          - PHP >= 8.1
-          - Lucent Framework (any version)
+          - PHP >= 8.4
           
           ### 📝 Build Information:
           - Version: ${{ steps.version.outputs.version }}
@@ -147,9 +144,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: lucent-blade.phar
+          files: flexblade.phar
           tag_name: ${{ steps.version.outputs.version }}
-          name: LucentBlade ${{ steps.version.outputs.version }}
+          name: Flex Blade ${{ steps.version.outputs.version }}
           body: ${{ steps.release_notes.outputs.release_notes }}
           draft: false
           prerelease: false
@@ -158,6 +155,6 @@ jobs:
       - name: Upload PHAR as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lucent-blade-${{ steps.version.outputs.version }}
-          path: lucent-blade.phar
+          name: flexblade-${{ steps.version.outputs.version }}
+          path: flexblade.phar
           retention-days: 90
