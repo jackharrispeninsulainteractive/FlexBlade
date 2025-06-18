@@ -9,8 +9,8 @@ if(!is_dir(TEMP_INSTALL)) {
 }
 
 require_once __DIR__ . '/build.php';
-rename(__DIR__ . '/lucent-blade.phar',__DIR__."/temp_install/lucent-blade.phar");
-require_once __DIR__ . '/temp_install/lucent-blade.phar';
+rename(__DIR__ . '/flexblade.phar',__DIR__."/temp_install/flexblade.phar");
+require_once __DIR__ . '/temp_install/flexblade.phar';
 require_once __DIR__ . '/vendor/autoload.php';
 
 function cleanupDirectory(string $dir): void

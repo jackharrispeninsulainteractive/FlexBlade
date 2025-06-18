@@ -36,15 +36,15 @@ function log_header(string $message): void {
 }
 
 // Start build process
-log_header("Starting LucentBlade Package Build Process");
+log_header("Starting FlexBlade Package Build Process");
 
-$pharFile = 'lucent-blade.phar';
+$pharFile = 'flexblade.phar';
 $sourceDir = __DIR__ . DIRECTORY_SEPARATOR . "src";
-$packageDir = $sourceDir . DIRECTORY_SEPARATOR . "LucentBlade";
+$packageDir = $sourceDir . DIRECTORY_SEPARATOR . "FlexBlade";
 
 // Verify source directory exists
 if (!is_dir($packageDir)) {
-    log_error("LucentBlade source directory not found: $packageDir");
+    log_error("FlexBlade source directory not found: $packageDir");
     exit(1);
 }
 
@@ -120,7 +120,7 @@ Phar::mapPhar();
 // Autoloader for LucentBlade classes
 spl_autoload_register(function ($class) {
     // Only handle LucentBlade namespace
-    if (str_starts_with($class, 'LucentBlade\\')) {
+    if (str_starts_with($class, 'FlexBlade\\')) {
         $file = 'phar://' . __FILE__ . '/' . str_replace('\\', '/', $class) . '.php';
         if (file_exists($file)) {
             require_once $file;
@@ -135,15 +135,18 @@ if (PHP_SAPI === 'cli' && basename($_SERVER['SCRIPT_FILENAME']) === basename(__F
     $phar = new Phar(__FILE__);
     $metadata = $phar->getMetadata();
     
-    echo "LucentBlade Package v" . ($metadata['version'] ?? 'unknown') . PHP_EOL;
-    echo "Blade templating engine for the Lucent Framework" . PHP_EOL;
+    echo "Flex Blade Package v" . ($metadata['version'] ?? 'unknown') . PHP_EOL;
+    echo "Blade style templating engine PHP" . PHP_EOL;
     echo PHP_EOL;
     echo "Classes available:" . PHP_EOL;
     
     $classes = [
-        'LucentBlade\BladeResponse',
-        'LucentBlade\ViewResponse', 
-        'LucentBlade\Facades\Blade'
+        'FlexBlade\Blade\BladeCompiler',
+        'FlexBlade\Blade\Directives', 
+        'FlexBlade\Blade\BladeComponents',
+        'FlexBlade\Blade\ExpressionHandler',
+        'FlexBlade\Minifier\Minify',
+        'FlexBlade\Minifier\MinifyOption'
     ];
     
     foreach ($classes as $class) {
@@ -152,7 +155,7 @@ if (PHP_SAPI === 'cli' && basename($_SERVER['SCRIPT_FILENAME']) === basename(__F
     }
     
     echo PHP_EOL;
-    echo "Usage: Include this PHAR in your Lucent project." . PHP_EOL;
+    echo "Usage: Include this PHAR in your PHP project." . PHP_EOL;
 }
 
 __HALT_COMPILER();
@@ -169,16 +172,19 @@ try {
 // Set metadata for the package
 $version = 'v' . date('ymd');
 $metadata = [
-    'name' => 'LucentBlade',
+    'name' => 'FlexBlade',
     'version' => $version,
-    'description' => 'Blade templating engine for the Lucent Framework',
+    'description' => 'Blade style templating engine for the PHP',
     'built_at' => date('c'),
     'build_type' => 'package',
-    'lucent_compatible' => '>=1.0.0',
-    'classes' => [
-        'LucentBlade\BladeResponse',
-        'LucentBlade\ViewResponse',
-        'LucentBlade\Facades\Blade'
+    'php_compatible' => '>= 8.4',
+    $classes = [
+        'FlexBlade\Blade\BladeCompiler',
+        'FlexBlade\Blade\Directives',
+        'FlexBlade\Blade\BladeComponents',
+        'FlexBlade\Blade\ExpressionHandler',
+        'FlexBlade\Minifier\Minify',
+        'FlexBlade\Minifier\MinifyOption'
     ]
 ];
 
@@ -209,7 +215,7 @@ log_success("Build complete! LucentBlade package size: {$fileSize}KB");
 // Show integration instructions
 log_header("Integration Instructions");
 echo COLORS['YELLOW'] . "To use this package:" . COLORS['RESET'] . PHP_EOL;
-echo "1. Copy lucent-blade.phar to your project's packages/ directory" . PHP_EOL;
-echo "2. Include it in your project: require_once 'packages/lucent-blade.phar';" . PHP_EOL;
-echo "3. Use in controllers: return new LucentBlade\\BladeResponse('view', \$data);" . PHP_EOL;
+echo "1. Copy flexblade.phar to your project's packages/ directory" . PHP_EOL;
+echo "2. Include it in your project: require_once 'packages/flexblade.phar';" . PHP_EOL;
+echo "3. Use in controllers: return new BladeCompiler->render(view,data[]);" . PHP_EOL;
 echo PHP_EOL;
