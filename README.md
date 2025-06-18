@@ -22,7 +22,7 @@ A **lightweight, standalone** Blade-inspired templating engine for **any PHP pro
 
 ```bash
 # Download the latest release
-curl -L -o flexblade.phar https://github.com/your-repo/flexblade/releases/latest/download/flexblade.phar
+curl -L -o flexblade.phar https://github.com/jackharrispeninsulainteractive/FlexBlade/releases/latest/download/flexblade.phar
 ```
 
 ```php
