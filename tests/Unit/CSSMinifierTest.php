@@ -13,6 +13,9 @@ class CSSMinifierTest extends TestCase
     public function setUp(): void
     {
         $this->minify = new Minify();
+        if(!is_dir(TEMP_INSTALL."/minify")){
+            mkdir(TEMP_INSTALL."/minify");
+        }
     }
 
     public function test_css_file_minification(): void
@@ -24,7 +27,7 @@ class CSSMinifierTest extends TestCase
         $this->assertTrue($originalSize > 0 && $originalSize !== false);
 
         $output = $this->minify::minifyCSS(file_get_contents($file));
-        $newFile = TEMP_INSTALL."/test_file.min.css";
+        $newFile = TEMP_INSTALL."/minify/test_file.min.css";
 
         $this->assertTrue(file_put_contents($newFile,$output) !== false);
 
@@ -46,7 +49,7 @@ class CSSMinifierTest extends TestCase
 
         $output = $this->minify->minifyHtmlDocument(file_get_contents($file));
 
-        $newFile = TEMP_INSTALL."/test_once_file.min.html";
+        $newFile = TEMP_INSTALL."/minify/test_once_file.min.html";
 
         $this->assertTrue(file_put_contents($newFile,$output) !== false);
 
@@ -68,7 +71,7 @@ class CSSMinifierTest extends TestCase
 
         $output = $this->minify->minifyHtmlDocument(file_get_contents($file));
 
-        $newFile = TEMP_INSTALL."/test_scope_file.min.html";
+        $newFile = TEMP_INSTALL."/minify/test_scope_file.min.html";
 
         $this->assertTrue(file_put_contents($newFile,$output) !== false);
 
@@ -81,7 +84,7 @@ class CSSMinifierTest extends TestCase
 
     public function generate_standard_test_css_file(): string
     {
-        $file = TEMP_INSTALL."/test_standard_css_file.css";
+        $file = TEMP_INSTALL."/minify/test_standard_css_file.css";
 
         $content = <<<CSS
         body{  
@@ -144,7 +147,7 @@ class CSSMinifierTest extends TestCase
 
     public function generate_once_css_test_html_file(): string
     {
-        $file = TEMP_INSTALL."/test_once_css_file.html";
+        $file = TEMP_INSTALL."/minify/test_once_css_file.html";
 
         $content = <<<HTML
         <!DOCTYPE html>
@@ -215,7 +218,7 @@ class CSSMinifierTest extends TestCase
     }
     public function generate_scope_css_test_html_file(): string
     {
-        $file = TEMP_INSTALL."/test_scope_css_file.html";
+        $file = TEMP_INSTALL."/minify/test_scope_css_file.html";
 
         $content = <<<HTML
         <!DOCTYPE html>
