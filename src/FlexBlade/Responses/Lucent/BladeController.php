@@ -1,8 +1,9 @@
 <?php
 
-namespace LucentBlade\Blade;
+namespace FlexBlade\Responses\Lucent;
 
 use Exception;
+use FlexBlade\Blade\BladeCompiler;
 use Lucent\Http\JsonResponse;
 use Lucent\Http\Request;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace LucentBlade\View;
+namespace FlexBlade;
 
 class View
 {

@@ -5,10 +5,10 @@
  * Last Updated - 18/11/2023
  */
 
-namespace LucentBlade;
+namespace FlexBlade\Responses\Lucent;
 
+use FlexBlade\Blade\BladeCompiler;
 use Lucent\Http\HttpResponse;
-use LucentBlade\Blade\BladeCompiler;
 
 /**
  * BladeResponse

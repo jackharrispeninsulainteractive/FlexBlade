@@ -1,6 +1,6 @@
 <?php
 
-namespace LucentBlade\Minifier;
+namespace FlexBlade\Minifier;
 
 enum MinifyOption: string {
     case NO_MINIFY = 'data-minify-skip';

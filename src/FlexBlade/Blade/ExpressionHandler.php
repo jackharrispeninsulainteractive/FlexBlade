@@ -1,6 +1,6 @@
 <?php
 
-namespace LucentBlade\Blade;
+namespace FlexBlade\Blade;
 
 /**
  * ExpressionHandler

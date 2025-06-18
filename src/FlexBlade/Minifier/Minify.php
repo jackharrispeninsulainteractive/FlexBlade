@@ -1,8 +1,8 @@
 <?php
 
-namespace LucentBlade\Minifier;
+namespace FlexBlade\Minifier;
 
-use LucentBlade\Blade\BladeCompiler;
+use FlexBlade\Blade\BladeCompiler;
 
 class Minify
 {

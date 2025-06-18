@@ -1,10 +1,10 @@
 <?php
 
-namespace LucentBlade\Blade;
+namespace FlexBlade\Blade;
 
 use Exception;
-use LucentBlade\Minifier\Minify;
-use LucentBlade\View\View;
+use FlexBlade\Minifier\Minify;
+use FlexBlade\View;
 
 /**
  * BladeCompiler
@@ -251,7 +251,7 @@ class BladeCompiler
             // Handle object property access (->)
             if(str_contains($key, '->') && str_starts_with($key, 'view')){
                 $result = "";
-                $phpCode = "\App\Extensions\View\View::Bag()->all()";
+                $phpCode = "\FlexBlade\View\View::Bag()->all()";
                 $sections = explode("->", $key);
 
                 foreach ($sections as $index => $section) {
@@ -280,6 +280,8 @@ class BladeCompiler
                 //return $result;
                 return $phpCode;
             }
+
+
             return $props[substr($matches[1], 1)];
         }, $content);
     }
