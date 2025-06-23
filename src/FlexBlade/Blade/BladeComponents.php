@@ -44,9 +44,25 @@ class BladeComponents
             $directory = VIEWS;
 
             if (str_contains($detection[0], '::')) {
-                $componentName = substr(explode(" ", $detection[2])[0], 2);
-                $namespace = $detection[1];
-                $directory = Blade::compiler()->resolveNamespace($detection[1]);
+                // For namespaced components like <x-ignite360::button.button>
+                // $detection[1] contains "ignite360::button.button"
+                $fullComponentPath = $detection[1];
+
+                if (str_contains($fullComponentPath, '::')) {
+                    $namespaceParts = explode('::', $fullComponentPath, 2);
+
+                    if (count($namespaceParts) === 2) {
+                        $namespace = $namespaceParts[0]; // "ignite360"
+                        $componentName = $namespaceParts[1]; // "button.button"
+                    } else {
+                        throw new ComponentNotFoundException(
+                            $fullComponentPath,
+                            "Invalid namespace format: {$fullComponentPath}"
+                        );
+                    }
+
+                    $directory = Blade::compiler()->resolveNamespace($namespace);
+                }
 
                 if ($directory === null) {
                     throw new ComponentNotFoundException(
@@ -54,7 +70,10 @@ class BladeComponents
                         "Namespace '{$namespace}' not registered"
                     );
                 }
-                $directory .= DIRECTORY_SEPARATOR;
+
+                // Update the component name in the processing stack to include namespace
+                array_pop(self::$processingStack);
+                self::$processingStack[] = $namespace . '::' . $componentName;
             }
 
             // Load and cache the component template if not already cached
@@ -101,7 +120,8 @@ class BladeComponents
 
         } catch (\Exception $e) {
             // Clean up processing stack on any error
-            if (($key = array_search($componentName, self::$processingStack)) !== false) {
+            $currentComponentName = ($namespace ? $namespace . '::' : '') . $componentName;
+            if (($key = array_search($currentComponentName, self::$processingStack)) !== false) {
                 array_splice(self::$processingStack, $key);
             }
 
