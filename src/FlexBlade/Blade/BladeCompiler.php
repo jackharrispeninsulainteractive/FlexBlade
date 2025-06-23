@@ -349,4 +349,9 @@ class BladeCompiler
     {
         $this->composerComponentNamespaces[$namespace] = $directory;
     }
+
+    public function resolveNamespace(string $namespace) : string|null
+    {
+        return $this->composerComponentNamespaces[$namespace] ?? null;
+    }
 }
