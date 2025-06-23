@@ -3,6 +3,7 @@
 namespace FlexBlade\Blade;
 
 use Exception;
+use FlexBlade\Blade;
 use FlexBlade\Minifier\Minify;
 use FlexBlade\View;
 
@@ -171,7 +172,7 @@ class BladeCompiler
         $component["content"] = file_get_contents($component["path"]);
 
         // Replace variables in the layout
-        foreach (View::Bag()->all() as $key => $value){
+        foreach (Blade::Bag()->all() as $key => $value){
             if(is_string($value) or is_numeric($value)) {
                 $component["content"] = str_replace('{{$' . $key . '}}', $value, $component["content"]);
             }
@@ -231,10 +232,27 @@ class BladeCompiler
      * @return string Content with variables replaced
      * @throws Exception
      */
-    public static function processVariables(array $props, string $content): string
+    public static function processVariables(array $props, string $content, bool $component = false): string
     {
+        if($component){
+            return preg_replace_callback(BladeCompiler::$syntaxDefinitions["patterns"]["variable"], function($matches) use ($props) {
+                $key = substr(trim($matches[1]),1);
+
+                if(!array_key_exists($key, $props)){
+                    $availableVars = empty($props) ? 'none' : "'" . implode("', '", array_keys($props)) . "'";
+                    throw new Exception(
+                        "Variable \"\${$key}\" is not available in this component. " .
+                        "Available variables: {$availableVars}. " .
+                        "Check your component usage and ensure you're passing the correct props."
+                    );
+                }
+
+                return $props[$key];
+            }, $content);
+        }
 
         return preg_replace_callback(BladeCompiler::$syntaxDefinitions["patterns"]["variable"], function($matches) use ($props) {
+
             $key = trim($matches[1]);
 
             // Handle variable references
