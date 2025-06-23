@@ -40,9 +40,8 @@ class BladeComponents
 
         //Check if we are using a namespace
         if(str_contains($detection[0], '::')) {
-            $componentName = substr($detection[2], 2);
+            $componentName = substr(explode(" ",$detection[2])[0], 2);
             $namespace = $detection[1];
-
             $directory = Blade::compiler()->resolveNamespace($detection[1]);
 
             if($directory === null){

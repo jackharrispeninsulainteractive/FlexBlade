@@ -236,7 +236,17 @@ class BladeCompiler
     {
         if($component){
             return preg_replace_callback(BladeCompiler::$syntaxDefinitions["patterns"]["variable"], function($matches) use ($props) {
+
+                if(str_starts_with($matches[1], "isset")){
+                    return ExpressionHandler::isset($matches[1],$props);
+                }
+
                 $key = substr(trim($matches[1]),1);
+
+                // Handle the null coalescing operator (??)
+                if(str_contains($key, ' ?? ')){
+                    return ExpressionHandler::variableOr($matches[1],$props);
+                }
 
                 if(!array_key_exists($key, $props)){
                     $availableVars = empty($props) ? 'none' : "'" . implode("', '", array_keys($props)) . "'";
