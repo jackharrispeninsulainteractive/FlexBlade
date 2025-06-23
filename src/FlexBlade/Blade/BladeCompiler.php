@@ -72,6 +72,8 @@ class BladeCompiler
         ]
     ];
 
+    private array $composerComponentNamespaces = [];
+
     /**
      * Render a Blade template to PHP output
      *
@@ -323,5 +325,10 @@ class BladeCompiler
         }
 
         return [];
+    }
+
+    public function registerNamespace(string $namespace, $directory) : void
+    {
+        $this->composerComponentNamespaces[$namespace] = $directory;
     }
 }
