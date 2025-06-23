@@ -25,13 +25,13 @@ class BladeCompiler
      */
     public static final array $syntaxDefinitions = [
         "directives"=>[
-            // Component with no closing tag: <x-alert type="error" />
-            '/<x-([a-zA-Z0-9\-_.]+)\s*(.*?)\/>/s' =>[
+            // Component with no closing tag: <x-alert type="error" /> or <x-ignite360::form.input />
+            '/<x-([a-zA-Z0-9\-_.::]+)\s*(.*?)\/>/s' =>[
                 "handler" => [BladeComponents::class,"anonymous"],
                 "name" => "directive.anonymous.self_closing",
             ],
-            // Component with content: <x-alert>Content here</x-alert>
-            '/<x-([a-zA-Z0-9\-_.]+)\s*(.*?)>(.*?)<\/x-\1>/s' => [
+            // Component with content: <x-alert>Content here</x-alert> or <x-ignite360::card>Content</x-ignite360::card>
+            '/<x-([a-zA-Z0-9\-_.::]+)\s*(.*?)>(.*?)<\/x-\1>/s' => [
                 "handler" => [BladeComponents::class,"anonymousWithBody"],
                 "name" => "directive.anonymous_with_content",
             ],
