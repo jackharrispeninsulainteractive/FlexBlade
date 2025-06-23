@@ -3,7 +3,8 @@
     "description": "A Laravel blade style templating engine for the Lucent framework.",
     "type": "library",
     "require-dev": {
-        "phpunit/phpunit": "^12.2"
+        "phpunit/phpunit": "^12.2",
+        "blueprintau/ignite-360-ui-components": "dev-master"
     },
     "license": "MIT",
     "authors": [
@@ -22,5 +23,11 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/blueprintau/Ignite-360-UI-Components.git"
+        }
+    ]
 }
