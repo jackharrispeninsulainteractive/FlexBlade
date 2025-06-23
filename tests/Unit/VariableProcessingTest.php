@@ -74,7 +74,7 @@ class VariableProcessingTest extends TestCase
     }
 
 
-    public function generate_basic_layout_file(): string
+    public static function generate_basic_layout_file(): string
     {
         $file = TEMP_INSTALL.DIRECTORY_SEPARATOR."views".DIRECTORY_SEPARATOR."layout.blade.php";
 
@@ -94,7 +94,7 @@ class VariableProcessingTest extends TestCase
         CONTENT;
 
         if(file_put_contents($file,$content) === false) {
-            $this->assertFalse("Failed to write file");
+            self::fail("Failed to write file");
         }
 
         return $file;
