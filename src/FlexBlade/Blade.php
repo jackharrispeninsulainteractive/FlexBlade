@@ -10,9 +10,9 @@ class Blade
     private static BladeCompiler $compiler;
     private static Bag $bag;
 
-    public static function registerComposerNamespace(string $namespace, string $prefix) : void
+    public static function registerComponentNamespace(string $directory, string $prefix) : void
     {
-        self::compiler()->registerComposerNamespace($namespace, $prefix);
+        self::compiler()->registerNamespace($directory, $prefix);
     }
 
     public static function compiler() : BladeCompiler
