@@ -35,7 +35,16 @@ class BladeComponents
 
         // Load and cache the component template if not already cached
         if(!isset(self::$cache[$componentName])){
-            $file = VIEWS."Blade".DIRECTORY_SEPARATOR."Components".DIRECTORY_SEPARATOR.str_replace(".",DIRECTORY_SEPARATOR,$componentName).".blade.php";
+            $file = VIEWS.str_replace(".",DIRECTORY_SEPARATOR,$componentName).".blade.php";
+
+            if(!file_exists($file)) {
+                throw new Exception(sprintf(
+                    "Blade component '%s' not found. Searched in:\n- %s",
+                    $componentName,
+                    $file
+                ));
+            }
+
             self::$cache[$componentName] = file_get_contents($file);
         }
 
@@ -48,7 +57,7 @@ class BladeComponents
         $props['children'] = BladeCompiler::processVariables($props, $body);
 
         // Process variables in the component output
-        return BladeCompiler::processVariables($props, $output);
+        return BladeCompiler::processVariables($props, $output,true);
     }
 
     /**
