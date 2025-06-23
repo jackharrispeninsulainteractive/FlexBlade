@@ -3,6 +3,7 @@
 namespace FlexBlade\Blade;
 
 use Exception;
+use FlexBlade\Blade;
 
 /**
  * BladeComponents
@@ -33,9 +34,35 @@ class BladeComponents
         // Get the component name (first capture group from regex)
         $componentName = $detection[1];
 
+        //Set our namespace
+        $namespace = null;
+        $directive = null;
+
+        //Check if we are using a namespace
+        if(str_contains($detection[0], '::')) {
+            $componentName = substr($detection[2], 2);
+            $namespace = $detection[1];
+
+            $directory = Blade::compiler()->resolveNamespace($detection[1]);
+
+            if($directory === null){
+                throw new Exception(sprintf(
+                    "Blade namespace '%s' not found when loading component:\n- %s",
+                    $namespace,
+                    $detection[0]
+                ));
+            }
+
+            $directory.= DIRECTORY_SEPARATOR;
+        }
+
+        if($directory === null) {
+            $directory = VIEWS;
+        }
+
         // Load and cache the component template if not already cached
         if(!isset(self::$cache[$componentName])){
-            $file = VIEWS.str_replace(".",DIRECTORY_SEPARATOR,$componentName).".blade.php";
+            $file = $directory.str_replace(".",DIRECTORY_SEPARATOR,$componentName).".blade.php";
 
             if(!file_exists($file)) {
                 throw new Exception(sprintf(
