@@ -2,101 +2,140 @@
 
 namespace FlexBlade\Blade;
 
-use Exception;
 use FlexBlade\Blade;
+use FlexBlade\Exceptions\ComponentNotFoundException;
+use FlexBlade\Exceptions\CircularReferenceException;
+use FlexBlade\Exceptions\MaxDepthExceededException;
+use FlexBlade\Exceptions\CompilationException;
 
 /**
- * BladeComponents
- *
- * Handles the processing of Blade component directives in templates.
- * This class is responsible for resolving and rendering component templates,
- * including both self-closing components and those with content.
+ * BladeComponents with robust error handling
  */
 class BladeComponents
 {
-    /**
-     * Cache for component templates to avoid repeated file reads
-     *
-     * @var array
-     */
     private static array $cache = [];
+    private static array $processingStack = [];
+    private static int $maxDepth = 10;
 
-    /**
-     * Process an anonymous component (either self-closing or with body)
-     *
-     * @param array $detection The regex match for the component tag
-     * @param string $body Optional body content for the component
-     * @return string Processed component output
-     * @throws Exception
-     */
     public static function anonymous(array $detection, string $body = "") : string
     {
-        // Get the component name (first capture group from regex)
         $componentName = $detection[1];
 
-        //Set our namespace
-        $namespace = null;
-        $directive = null;
-
-        //Check if we are using a namespace
-        if(str_contains($detection[0], '::')) {
-            $componentName = substr(explode(" ",$detection[2])[0], 2);
-            $namespace = $detection[1];
-            $directory = Blade::compiler()->resolveNamespace($detection[1]);
-
-            if($directory === null){
-                throw new Exception(sprintf(
-                    "Blade namespace '%s' not found when loading component:\n- %s",
-                    $namespace,
-                    $detection[0]
-                ));
+        try {
+            // Check for circular references
+            if (in_array($componentName, self::$processingStack)) {
+                throw new CircularReferenceException([...self::$processingStack, $componentName]);
             }
 
-            $directory.= DIRECTORY_SEPARATOR;
-        }
+            // Check maximum depth
+            if (count(self::$processingStack) >= self::$maxDepth) {
+                throw new MaxDepthExceededException(
+                    count(self::$processingStack) + 1,
+                    self::$maxDepth,
+                    [...self::$processingStack, $componentName]
+                );
+            }
 
-        if($directory === null) {
+            // Add to processing stack
+            self::$processingStack[] = $componentName;
+
+            // Handle namespace resolution
+            $namespace = null;
             $directory = VIEWS;
-        }
 
-        // Load and cache the component template if not already cached
-        if(!isset(self::$cache[$componentName])){
-            $file = $directory.str_replace(".",DIRECTORY_SEPARATOR,$componentName).".blade.php";
+            if (str_contains($detection[0], '::')) {
+                $componentName = substr(explode(" ", $detection[2])[0], 2);
+                $namespace = $detection[1];
+                $directory = Blade::compiler()->resolveNamespace($detection[1]);
 
-            if(!file_exists($file)) {
-                throw new Exception(sprintf(
-                    "Blade component '%s' not found. Searched in:\n- %s",
-                    $componentName,
-                    $file
-                ));
+                if ($directory === null) {
+                    throw new ComponentNotFoundException(
+                        $namespace . '::' . $componentName,
+                        "Namespace '{$namespace}' not registered"
+                    );
+                }
+                $directory .= DIRECTORY_SEPARATOR;
             }
 
-            self::$cache[$componentName] = file_get_contents($file);
+            // Load and cache the component template if not already cached
+            $cacheKey = ($namespace ? $namespace . '::' : '') . $componentName;
+
+            if (!isset(self::$cache[$cacheKey])) {
+                $file = $directory.str_replace(".", DIRECTORY_SEPARATOR, $componentName) . ".blade.php";
+
+                if (!file_exists($file)) {
+                    throw new ComponentNotFoundException($cacheKey, $file);
+                }
+
+                $content = file_get_contents($file);
+                if ($content === false) {
+                    throw new CompilationException(
+                        "Failed to read component file",
+                        $cacheKey,
+                        'file_reading'
+                    );
+                }
+
+                self::$cache[$cacheKey] = $content;
+            }
+
+            $output = self::$cache[$cacheKey];
+
+            // Parse component attributes
+            $props = BladeCompiler::propertiesToKeyValuePair($detection[2]);
+
+            // Add the body content as a special $children variable
+            $props['children'] = BladeCompiler::processVariables($props, $body, true);
+
+            // Process variables in the component output
+            $result = BladeCompiler::processVariables($props, $output, true);
+
+            // RECURSIVE PROCESSING: Process any nested components in the result
+            $compiler = new BladeCompiler();
+            $result = $compiler->processSyntax($result);
+
+            // Remove from processing stack
+            array_pop(self::$processingStack);
+
+            return $result;
+
+        } catch (\Exception $e) {
+            // Clean up processing stack on any error
+            if (($key = array_search($componentName, self::$processingStack)) !== false) {
+                array_splice(self::$processingStack, $key);
+            }
+
+            // Re-throw the exception
+            throw $e;
         }
-
-        $output = self::$cache[$componentName];
-
-        // Parse component attributes
-        $props = BladeCompiler::propertiesToKeyValuePair($detection[2]);
-
-        // Add the body content as a special $body variable
-        $props['children'] = BladeCompiler::processVariables($props, $body);
-
-        // Process variables in the component output
-        return BladeCompiler::processVariables($props, $output,true);
     }
 
-    /**
-     * Process a component that has a body/content between opening and closing tags
-     *
-     * @param array $detection The regex match for the component tag with content
-     * @return string Processed component output
-     * @throws Exception
-     */
     public static function anonymousWithBody(array $detection) : string
     {
-        $processedContent = new BladeCompiler()->processSyntax($detection[3]);
+        try {
+            $processedContent = new BladeCompiler()->processSyntax($detection[3]);
+            return self::anonymous($detection, $processedContent);
+        } catch (\Exception $e) {
+            // Add context about which component was being processed
+            if (method_exists($e, 'addContext')) {
+                $e->addContext('processing_component_with_body', $detection[1]);
+            }
+            throw $e;
+        }
+    }
 
-        return self::anonymous($detection, $processedContent);
+    public static function setMaxDepth(int $depth): void
+    {
+        self::$maxDepth = $depth;
+    }
+
+    public static function getProcessingStack(): array
+    {
+        return self::$processingStack;
+    }
+
+    public static function clearCache(): void
+    {
+        self::$cache = [];
     }
 }
