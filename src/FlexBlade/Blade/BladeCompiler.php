@@ -74,6 +74,8 @@ class BladeCompiler
     ];
 
     private array $composerComponentNamespaces = [];
+    
+    private ?string $cacheLocation = null;
 
     /**
      * Render a Blade template to PHP output
@@ -118,7 +120,13 @@ class BladeCompiler
 
         ob_start();
         extract($data);
+
+        if($this->cacheLocation !== null) {
+            file_put_contents($this->cacheLocation. $view, $page);
+        }
+
         eval("?>".$page);
+
 
         return $minifier->minifyHtmlDocument(ob_get_clean());
     }
@@ -363,5 +371,18 @@ class BladeCompiler
     public function resolveNamespace(string $namespace) : string|null
     {
         return $this->composerComponentNamespaces[$namespace] ?? null;
+    }
+
+    public function setCacheLocation(string $directory) : void
+    {
+        if(!str_ends_with($directory,DIRECTORY_SEPARATOR)){
+            $directory .= DIRECTORY_SEPARATOR;
+        }
+        
+        $this->cacheLocation = $directory;
+        
+        if(!is_dir($this->cacheLocation)){
+            mkdir($this->cacheLocation, 0777, true);
+        }
     }
 }
