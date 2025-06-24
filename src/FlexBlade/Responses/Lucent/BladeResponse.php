@@ -7,6 +7,7 @@
 
 namespace FlexBlade\Responses\Lucent;
 
+use FlexBlade\Blade;
 use FlexBlade\Blade\BladeCompiler;
 use Lucent\Http\HttpResponse;
 
@@ -34,13 +35,6 @@ class BladeResponse extends HttpResponse
     private array $data;
 
     /**
-     * The BladeCompiler instance used to compile templates
-     *
-     * @var BladeCompiler
-     */
-    private BladeCompiler $compiler;
-
-    /**
      * Create a new BladeResponse
      *
      * @param string $path Path to the Blade template file
@@ -53,7 +47,6 @@ class BladeResponse extends HttpResponse
 
         $this->path = $path;
         $this->data = $data;
-        $this->compiler = new BladeCompiler();
     }
 
     /**
@@ -63,7 +56,7 @@ class BladeResponse extends HttpResponse
      */
     public function render(): string
     {
-        return $this->compiler->render($this->path,$this->data);
+        return Blade::render($this->path, $this->data);
     }
 
     public function set_response_header(): void

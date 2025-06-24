@@ -3,6 +3,7 @@
 namespace FlexBlade\Responses\Lucent;
 
 use Exception;
+use FlexBlade\Blade;
 use FlexBlade\Blade\BladeCompiler;
 use Lucent\Http\JsonResponse;
 use Lucent\Http\Request;
@@ -10,7 +11,7 @@ use Lucent\Http\Request;
 class BladeController
 {
 
-    public function getComponent(BladeCompiler $compiler,Request $request) : JsonResponse
+    public function getComponent(Request $request) : JsonResponse
     {
         $response = new JsonResponse();
 
@@ -25,7 +26,7 @@ class BladeController
         $props = $request->except(["component"]);
 
         try{
-            $response->addContent("html",$compiler->render("Blade/Components/".$name,$props));
+            $response->addContent("html",Blade::render("Blade/Components/".$name,$props));
         }catch (Exception $e){
             $response->setMessage($e->getMessage());
             $response->setOutcome("false");
