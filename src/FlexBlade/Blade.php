@@ -39,5 +39,10 @@ class Blade
         return self::$bag;
     }
 
+    public static function enableCache(string $directory) : void
+    {
+        self::compiler()->setCacheLocation($directory);
+    }
+
 
 }
