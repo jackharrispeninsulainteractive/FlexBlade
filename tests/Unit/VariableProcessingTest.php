@@ -3,6 +3,7 @@
 namespace Unit;
 
 use Exception;
+use FlexBlade\Blade;
 use FlexBlade\Blade\BladeCompiler;
 use PHPUnit\Framework\TestCase;
 
@@ -20,6 +21,7 @@ class VariableProcessingTest extends TestCase
         }
 
         define('VIEWS',TEMP_INSTALL.DIRECTORY_SEPARATOR."views".DIRECTORY_SEPARATOR);
+        Blade::enableCache(VIEWS.'blade-cache');
     }
 
 

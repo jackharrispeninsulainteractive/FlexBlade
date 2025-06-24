@@ -22,6 +22,8 @@ class RecursionTest extends TestCase
         }
 
         define('VIEWS',TEMP_INSTALL.DIRECTORY_SEPARATOR."views".DIRECTORY_SEPARATOR);
+        Blade::enableCache(VIEWS.'blade-cache');
+
 
         // Reset max depth to default for each test
         BladeComponents::setMaxDepth(10);
