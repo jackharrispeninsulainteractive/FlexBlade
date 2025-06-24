@@ -122,11 +122,10 @@ class BladeCompiler
         extract($data);
 
         if($this->cacheLocation !== null) {
-            file_put_contents($this->cacheLocation. $view, $page);
+            file_put_contents($this->cacheLocation.$view, $page);
         }
 
         eval("?>".$page);
-
 
         return $minifier->minifyHtmlDocument(ob_get_clean());
     }
@@ -378,7 +377,7 @@ class BladeCompiler
         if(!str_ends_with($directory,DIRECTORY_SEPARATOR)){
             $directory .= DIRECTORY_SEPARATOR;
         }
-        
+
         $this->cacheLocation = $directory;
         
         if(!is_dir($this->cacheLocation)){
