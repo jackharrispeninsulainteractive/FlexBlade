@@ -292,7 +292,7 @@ class BladeCompiler
             // Handle object property access (->)
             if(str_contains($key, '->') && str_starts_with($key, 'view')){
                 $result = "";
-                $phpCode = "\FlexBlade\View\View::Bag()->all()";
+                $phpCode = "\FlexBlade\Blade::Bag()->all()";
                 $sections = explode("->", $key);
 
                 foreach ($sections as $index => $section) {
@@ -351,7 +351,7 @@ class BladeCompiler
             foreach (explode("->",$input) as $section) {
 
                 if($section === '$view'){
-                    $result[0] = 'App\Extensions\View\View::Bag()->all()';
+                    $result[0] = "\FlexBlade\Blade::Bag()->all()";
                 }else{
                     $result[0] .="['".$section."']";
                 }
