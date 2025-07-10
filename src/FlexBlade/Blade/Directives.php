@@ -94,7 +94,7 @@ class Directives
     public static function include(array $detection) : string
     {
         $detection[1] = str_replace(".",DIRECTORY_SEPARATOR,$detection[1]);
-        $path = FileSystem::rootPath().DIRECTORY_SEPARATOR."App".DIRECTORY_SEPARATOR."Views".DIRECTORY_SEPARATOR."Blade".DIRECTORY_SEPARATOR."Components".DIRECTORY_SEPARATOR.$detection[1].".blade.php";
+        $path = FileSystem::rootPath().DIRECTORY_SEPARATOR."App".DIRECTORY_SEPARATOR."Views".DIRECTORY_SEPARATOR.$detection[1].".blade.php";
         return "<?php include_once '$path'; ?>";
     }
 
