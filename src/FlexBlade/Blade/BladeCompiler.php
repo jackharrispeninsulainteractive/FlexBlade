@@ -87,17 +87,20 @@ class BladeCompiler
      */
     public function render(string $view, array $data = []): string
     {
+        if (!str_starts_with($view, '/') || str_starts_with($view, DIRECTORY_SEPARATOR)) {
+            $view = VIEWS . $view;
+        }
 
         if(!str_ends_with($view, ".blade.php")){
             $view.=".blade.php";
         }
 
-        if(!file_exists(VIEWS.$view)){
-            throw new Exception("Unable to load layout file from ".VIEWS.$view);
+        if(!file_exists($view)){
+            throw new Exception("Unable to load layout file from ".$view);
         }
 
         // Get the content of the view file
-        $page = file_get_contents(VIEWS.$view);
+        $page = file_get_contents($view);
 
         // Resolve the layout if the view extends a layout
         if(str_contains($page, "@extends(")) {
